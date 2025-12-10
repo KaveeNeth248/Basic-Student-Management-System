@@ -1,41 +1,148 @@
-# Prerequisites
-*.d
+#include <iostream>
+#include <vector>
+#include <string>
+#include <iomanip>   // for setw
+using namespace std;
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+// ANSI color codes (Linux/macOS terminals, some Windows terminals)
+#define RESET   "\033[0m"
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
+#define CYAN    "\033[36m"
+#define MAGENTA "\033[35m"
+#define BOLD    "\033[1m"
 
-# Precompiled Headers
-*.gch
-*.pch
+struct Student {
+    int id;
+    string name;
+    int age;
+    string grade;
+};
 
-# Linker files
-*.ilk
+vector<Student> students;
 
-# Debugger Files
-*.pdb
+void showHeader() {
+    cout << MAGENTA << BOLD;
+    cout << "=============================================\n";
+    cout << "        🎓 STUDENT MANAGEMENT SYSTEM 🎓       \n";
+    cout << "=============================================\n";
+    cout << RESET;
+}
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+void showMenu() {
+    showHeader();
+    cout << CYAN << "[1]" << RESET << " ➤ Add Student\n";
+    cout << CYAN << "[2]" << RESET << " ➤ Display Students\n";
+    cout << CYAN << "[3]" << RESET << " ➤ Search Student\n";
+    cout << CYAN << "[4]" << RESET << " ➤ Update Student\n";
+    cout << CYAN << "[5]" << RESET << " ➤ Delete Student\n";
+    cout << CYAN << "[6]" << RESET << " ➤ Exit\n";
+    cout << YELLOW << "Choose an option: " << RESET;
+}
 
-# Fortran module files
-*.mod
-*.smod
+void addStudent() {
+    Student s;
+    cout << YELLOW << "Enter ID: " << RESET;
+    cin >> s.id;
+    cout << YELLOW << "Enter Name: " << RESET;
+    cin.ignore();
+    getline(cin, s.name);
+    cout << YELLOW << "Enter Age: " << RESET;
+    cin >> s.age;
+    cout << YELLOW << "Enter Grade: " << RESET;
+    cin >> s.grade;
+    students.push_back(s);
+    cout << GREEN << "✅ Student added successfully!\n" << RESET;
+}
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
+void displayStudents() {
+    if (students.empty()) {
+        cout << RED << "❌ No students available.\n" << RESET;
+        return;
+    }
+    cout << CYAN << "\n--- Student List ---\n" << RESET;
+    cout << "-------------------------------------------------------------\n";
+    cout << setw(6) << "ID" << " | "
+         << setw(20) << left << "Name" << " | "
+         << setw(5) << "Age" << " | "
+         << setw(6) << "Grade" << endl;
+    cout << "-------------------------------------------------------------\n";
+    for (auto &s : students) {
+        cout << setw(6) << s.id << " | "
+             << setw(20) << left << s.name << " | "
+             << setw(5) << s.age << " | "
+             << setw(6) << s.grade << endl;
+    }
+    cout << "-------------------------------------------------------------\n";
+}
 
-# Executables
-*.exe
-*.out
-*.app
+void searchStudent() {
+    int id;
+    cout << YELLOW << "Enter ID to search: " << RESET;
+    cin >> id;
+    for (auto &s : students) {
+        if (s.id == id) {
+            cout << GREEN << "✅ Found: " << RESET 
+                 << s.name << " (Age " << s.age << ", Grade " << s.grade << ")\n";
+            return;
+        }
+    }
+    cout << RED << "❌ Student not found.\n" << RESET;
+}
 
-# debug information files
-*.dwo
+void updateStudent() {
+    int id;
+    cout << YELLOW << "Enter ID to update: " << RESET;
+    cin >> id;
+    for (auto &s : students) {
+        if (s.id == id) {
+            cout << YELLOW << "Enter new name: " << RESET;
+            cin.ignore();
+            getline(cin, s.name);
+            cout << YELLOW << "Enter new age: " << RESET;
+            cin >> s.age;
+            cout << YELLOW << "Enter new grade: " << RESET;
+            cin >> s.grade;
+            cout << GREEN << "✅ Student updated successfully!\n" << RESET;
+            return;
+        }
+    }
+    cout << RED << "❌ Student not found.\n" << RESET;
+}
+
+void deleteStudent() {
+    int id;
+    cout << YELLOW << "Enter ID to delete: " << RESET;
+    cin >> id;
+    for (auto it = students.begin(); it != students.end(); ++it) {
+        if (it->id == id) {
+            students.erase(it);
+            cout << GREEN << "✅ Student deleted successfully!\n" << RESET;
+            return;
+        }
+    }
+    cout << RED << "❌ Student not found.\n" << RESET;
+}
+
+int main() {
+    int choice;
+    do {
+        showMenu();
+        cin >> choice;
+        cout << endl;
+        switch (choice) {
+            case 1: addStudent(); break;
+            case 2: displayStudents(); break;
+            case 3: searchStudent(); break;
+            case 4: updateStudent(); break;
+            case 5: deleteStudent(); break;
+            case 6: cout << MAGENTA << "👋 Exiting... Goodbye!\n" << RESET; break;
+            default: cout << RED << "❌ Invalid choice!\n" << RESET;
+        }
+        cout << endl;
+    } while (choice != 6);
+
+    return 0;
+}
+
